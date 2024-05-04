@@ -20,9 +20,9 @@ jobs:
             archive-name: nginx-spcgen-linux-x86_64.tar.gz
           - build: linux-aatch64
             os: ubuntu-latest
-            rust: stable-aarch64-unknown-linux-musl
-            target: aarch64-unknown-linux-musl
-            archive-name: nginx-spcgen-linux-aarch64-musl.tar.gz
+            rust: stable-aarch64-unknown-linux-gnu
+            target: aarch64-unknown-linux-gnu
+            archive-name: nginx-spcgen-linux-aarch64-gnu.tar.gz
           - build: macos-x86_64
             os: macos-latest
             rust: stable
@@ -35,9 +35,9 @@ jobs:
             archive-name: nginx-spcgen-windows-x86_64-msvc.7z
           - build: windows-aarch64
             os: windows-latest
-            rust: stable-aarch64-msvc
-            target: aarch64-pc-windows-msvc
-            archive-name: nginx-spcgen-windows-aarch64-msvc.7z
+            rust: stable-aarch64-gnu
+            target: aarch64-pc-windows-gnu
+            archive-name: nginx-spcgen-windows-aarch64-gnu.7z
       fail-fast: false
 
     steps:
