@@ -11,33 +11,33 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        build: [linux-x86_64, linux-aatch64, macos-x86_64, windows-x86_64, windows-aarch64]
+        build: [linux-x86_64-musl, linux-x86_64-gnu, macos-x86_64, windows-x86_64-msvc, windows-x86_64-gnu]
         include:
-          - build: linux-x86_64
+          - build: linux-x86_64-musl
             os: ubuntu-latest
             rust: stable
             target: x86_64-unknown-linux-musl
-            archive-name: nginx-spcgen-linux-x86_64.tar.gz
-          - build: linux-aatch64
+            archive-name: nginx-spcgen-linux-x86_64-musl.tar.gz
+          - build: linux-x86_64-gnu
             os: ubuntu-latest
-            rust: stable-aarch64-unknown-linux-gnu
-            target: aarch64-unknown-linux-gnu
+            rust: stable
+            target: x86_64-unknown-linux-gnu
             archive-name: nginx-spcgen-linux-aarch64-gnu.tar.gz
           - build: macos-x86_64
             os: macos-latest
             rust: stable
             target: x86_64-apple-darwin
-            archive-name: nginx-spcgen-macos-x86_64.tar.gz
-          - build: windows-x86_64
+            archive-name: nginx-spcgen-darwin-x86_64.tar.gz
+          - build: windows-x86_64-msvc
             os: windows-latest
             rust: stable-x86_64-msvc
             target: x86_64-pc-windows-msvc
             archive-name: nginx-spcgen-windows-x86_64-msvc.7z
-          - build: windows-aarch64
+          - build: windows-x86_64-gnu
             os: windows-latest
-            rust: stable-aarch64-gnu
-            target: aarch64-pc-windows-gnu
-            archive-name: nginx-spcgen-windows-aarch64-gnu.7z
+            rust: stable-x86_64-gnu
+            target: x86_64-pc-windows-gnu
+            archive-name: nginx-spcgen-windows-x86_64-gnu.7z
       fail-fast: false
 
     steps:
