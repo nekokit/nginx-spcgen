@@ -6,8 +6,8 @@ on:
       - "v*"
 
 jobs:
-  build:
-    name: build
+  release:
+    name: Build & Release
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -74,3 +74,5 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: "archive/**"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
