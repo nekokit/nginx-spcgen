@@ -1,4 +1,4 @@
-name: 发布
+name: CI_Release
 
 on:
   push:
@@ -11,23 +11,33 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        build: [linux, macos, windows]
+        build: [linux-x86_64, linux-aatch64, macos-x86_64, windows-x86_64, windows-aarch64]
         include:
-          - build: linux
+          - build: linux-x86_64
             os: ubuntu-latest
             rust: stable
-            target: x86_64-unknown-linux-musl
-            archive-name: nginx-spcgen-linux.tar.gz
-          - build: macos
+            target: x86_64-unknown-linux-gnu
+            archive-name: nginx-spcgen-linux-x86_64.tar.gz
+          - build: linux-aatch64
+            os: ubuntu-latest
+            rust: stable
+            target: aarch64-unknown-linux-gnu
+            archive-name: nginx-spcgen-linux-aarch64.tar.gz
+          - build: macos-x86_64
             os: macos-latest
             rust: stable
             target: x86_64-apple-darwin
-            archive-name: nginx-spcgen-macos.tar.gz
-          - build: windows
-            os: windows-2019
+            archive-name: nginx-spcgen-macos-x86_64.tar.gz
+          - build: windows-x86_64
+            os: windows-latest
             rust: stable-x86_64-msvc
             target: x86_64-pc-windows-msvc
-            archive-name: nginx-spcgen-windows.7z
+            archive-name: nginx-spcgen-windows-x86_64.7z
+          - build: windows-aarch64
+            os: windows-latest
+            rust: stable-x86_64-msvc
+            target: x86_64-pc-windows-msvc
+            archive-name: nginx-spcgen-windows-aarch64.7z
       fail-fast: false
 
     steps:
@@ -73,6 +83,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
+          body_path: CHANGELOG.md
           files: archive/${{ matrix.archive-name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
