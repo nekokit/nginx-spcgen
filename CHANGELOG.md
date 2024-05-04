@@ -1,6 +1,4 @@
-# 更新日志
-
-## [0.1.1] - 2024-05-03
+## [0.1.4] - 2024-05-04
 
 ### Features
 
@@ -8,3 +6,7 @@
   - `nginx_spcgen_cli [-f <配置文件路径>] example` 创建示例配置文件
   - `nginx_spcgen_cli [-f <配置文件路径>] test` 测试配置文件
   - `nginx_spcgen_cli [-f <配置文件路径>] generate [-o <输出文件夹路径>]` 生成 Nginx 配置文件
+
+### CI
+
+- 实现自动发布
