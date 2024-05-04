@@ -7,7 +7,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use anyhow::Result;
+use anyhow::{bail, Result};
 use clap::{Parser, Subcommand};
 use colored::Colorize;
 use serde::{Deserialize, Serialize};
@@ -17,7 +17,6 @@ use crate::{DEFAULT_CONFIG_FILE, DEFAULT_CONFIG_PATH, DEFAULT_OUTPUT_PATH, NGINX
 /// # Cli 程序对象
 ///
 /// 存储相关信息。
-///
 pub struct Cli {
     /// 命令行参数
     cli_args: CliArgs,
@@ -36,7 +35,6 @@ impl Cli {
     /// # Returns
     ///
     /// Cli 对象
-    ///
     pub fn create(cli_args: CliArgs) -> Self {
         Self {
             cli_args,
@@ -52,6 +50,7 @@ impl Cli {
             .unwrap_or(PathBuf::from(DEFAULT_CONFIG_PATH))
     }
 
+    /// 工具运行入口
     pub fn startup(&mut self) -> Result<()> {
         match &self.cli_args.main_command {
             MainCommand::Example => self.example(),
@@ -79,14 +78,14 @@ impl Cli {
         Ok(())
     }
 
-    // 从文件加载配置文件
+    /// 从文件加载配置文件
     pub fn load_config(&mut self) -> Result<()> {
         let path = self.get_config_path();
         self.server_config = toml::from_str(&fs::read_to_string(path)?)?;
         Ok(())
     }
 
-    // 列出识别的配置
+    /// 列出识别的配置
     pub fn display_config(&self) {
         for (host_name, host) in self.server_config.iter() {
             let mut services_list = Vec::new();
@@ -105,10 +104,19 @@ impl Cli {
         }
     }
 
-    // 生成配置
+    /// 生成配置
+    ///
+    /// # Arguments
+    ///
+    /// - `path` - 输出文件夹路径
     pub fn generate_nginx_config(&self, path: &Path) -> Result<()> {
-        fs::remove_dir_all(path)?;
-        fs::create_dir(path)?;
+        if !path.exists() {
+            fs::create_dir(path)?;
+        } else if path.is_dir() {
+            fs::remove_dir_all(path)?;
+        } else {
+            bail!("output path is not a dir: {}", path.display())
+        };
         for (host_name, host) in &self.server_config {
             let config_path = path.join(format!("{}.conf", host_name));
             let mut content = Vec::new();
@@ -142,9 +150,14 @@ server {{
         Ok(())
     }
 
+    /// 写入 location 配置
     fn write_location(path: &Path) -> Result<()> {
         if !path.exists() {
             fs::create_dir(path)?;
+        } else if path.is_dir() {
+            fs::remove_dir_all(path)?;
+        } else {
+            bail!("output path is not a dir: {}", path.display())
         };
         fs::File::create(path.join("location.conf"))?
             .write_all(NGINX_CONFIG_LOCATION.as_bytes())?;
@@ -155,7 +168,6 @@ server {{
 /// # 主机信息
 ///
 /// 一个主机负责一个域名，多个服务，每个服务使用子域名。
-///
 #[derive(Deserialize, Serialize)]
 pub struct HostInfo {
     /// 域名
@@ -177,6 +189,7 @@ pub struct ServiceInfo {
     pub port: u16,
 }
 
+/// # 命令行参数
 #[derive(Parser, Debug)]
 #[command(author, version, about)]
 pub struct CliArgs {

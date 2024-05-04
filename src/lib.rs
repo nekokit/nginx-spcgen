@@ -7,12 +7,9 @@
 //!
 
 mod cli;
-mod logger;
 
 pub use cli::{Cli, CliArgs};
-pub use logger::init_logger;
 
-pub const DEFAULT_LOG_PATH: &'static str = "result.log";
 pub const DEFAULT_CONFIG_PATH: &'static str = "config.toml";
 pub const DEFAULT_OUTPUT_PATH: &'static str = "output";
 
@@ -25,14 +22,14 @@ domain = "server0.com"
 forward_server = "$server_addr"
 
 # 服务配置
-# `https://www.server0.com` --- Nginx --> `https://$server_addr:443`
+# `http://www.server0.com` --- Nginx --> `https://$server_addr:443`
 [[server0.services]]
 name = "www"
 forward_scheme = "https"
 port = 443
 
 # 服务配置
-# `http://nav.server0.com` --- Nginx --> `https://$server_addr:80`
+# `http://nav.server0.com` --- Nginx --> `http://$server_addr:80`
 [[server0.services]]
 name = "nav"
 forward_scheme = "http"
